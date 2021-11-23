@@ -41,4 +41,13 @@ Route::get('/admin', [DashboardController::class,'index']);
 //Category
 Route::get('/admin/category', [CategoryController::class,'index']);
 Route::get('/admin/category/create', [CategoryController::class,'create']);
+Route::get('/admin/category/{id}', [CategoryController::class,'show']);
+//karena menggunakan fungsi Rout Model Binding nama variabel id diganti menjadi karegori disesuaikan dengan nama
+// variabel kategori dari category controller function Edit
+Route::get('/admin/category/{kategori}/edit', [CategoryController::class,'edit']); 
+
 Route::post('/admin/category', [CategoryController::class,'store']);
+
+//untuk fungsi rubah data menggunakan put
+Route::put('/admin/category/{updatecategory}', [CategoryController::class,'update']);
+Route::delete('/admin/category/{deletecategory}', [CategoryController::class,'destroy']);

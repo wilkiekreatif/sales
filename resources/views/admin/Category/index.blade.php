@@ -19,6 +19,18 @@
 @section('content')
   <div class="row">
     <div class="col">
+      @if (session('success'))
+        <div class="alert alert-success">
+          {{ session('success')}}
+          <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      @elseif(session('failed'))
+        <div class="alert alert-danger">
+          {{ session('failed')}}
+        </div>
+      @endif
       <div class="card">
         <div class="card-header">
           <h4 class="card-title">Categories</h4>
@@ -46,17 +58,21 @@
                   <td>{{ $category->name }}</td>
                   <td>{{ $category->status }}</td>
                   <td>
-                    <div class="btn-group">
-                      <a href="#" class="btn btn-info">
-                        <i class="fas fa-eye"></i>
-                      </a>
-                      <a href="#" class="btn btn-success">
-                        <i class="fas fa-pen"></i>
-                      </a>
-                      <a href="#" class="btn btn-danger">
-                        <i class="fas fa-trash"></i>
-                      </a>
-                    </div>
+                    <form action="{{ url('/admin/category/'.$category->id)}}" method="POST">
+                      @csrf
+                      @method('delete')
+                      <div class="btn-group">
+                        <a href="{{ url('/admin/category/'.$category->id) }}" class="btn btn-info">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ url('/admin/category/'.$category->id).'/edit' }}" class="btn btn-success">
+                          <i class="fas fa-pen"></i>
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </form>
                   </td>
                 </tr>
                 @endforeach

@@ -44,7 +44,7 @@
             </a>
           </li>
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link @if(Request::is('admin/category*')) active @endif">
               <i class="nav-icon fas fa-folder-open"></i>
               <p>
                 Data
