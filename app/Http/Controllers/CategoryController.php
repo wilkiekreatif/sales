@@ -128,4 +128,5 @@ class CategoryController extends Controller
             return redirect('admin/category')->with('failed', 'Delete data failed!');
         }
     }
+
 }

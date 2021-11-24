@@ -59,14 +59,13 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('product.index')}}" class="nav-link @if(Request::is('admin/product*')) active @endif">
                   <i class="fas fa-list nav-icon"></i>
                   <p>Product</p>
                 </a>
               </li>
             </ul>
           </li>
-
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-dollar-sign"></i>

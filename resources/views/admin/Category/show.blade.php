@@ -15,7 +15,7 @@
   </div><!-- /.row -->
 @endsection
 
-@section('title','Add Category')
+@section('title','Show Category')
 
 @section('content')
   <div class="row">

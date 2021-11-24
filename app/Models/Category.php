@@ -22,4 +22,10 @@ class Category extends Model
     //     'created_at',
     //     'updated_at',
     // ];
+
+    //digunakan untuk relasi data Many
+    public function productonetomany()
+    {
+        return $this->hasMany(Product::class, 'category_id', 'id');
+    }
 }
