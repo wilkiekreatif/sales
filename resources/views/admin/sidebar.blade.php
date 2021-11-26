@@ -13,7 +13,7 @@
           <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Wildan Auliana</a>
+          <a href="#" class="d-block">{{ auth()->user()->name }}</a>
         </div>
       </div>
 
@@ -44,7 +44,7 @@
             </a>
           </li>
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link @if(Request::is('admin/category*')) active @endif">
+            <a href="#" class="nav-link @if(Request::is('admin/category*') OR Request::is('admin/product*')) active @endif">
               <i class="nav-icon fas fa-folder-open"></i>
               <p>
                 Data
@@ -67,13 +67,25 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{ route('transaction')}}" class="nav-link @if(Request::is('admin/transaction*')) active @endif">
               <i class="nav-icon fas fa-dollar-sign"></i>
               <p>
                 Sales
                 <!-- <span class="right badge badge-danger">New</span> -->
               </p>
             </a>
+          </li>
+
+          <li class="nav-item">
+            {{ Form::open(['route' => 'logout', 'method' => 'post']) }}
+            <button type="submit" class="nav-link">
+              <i class="nav-icon fas fa-door-open"></i>
+              <p>
+                Logout
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </button>
+            {{ Form::close() }}
           </li>
         </ul>
       </nav>

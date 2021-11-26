@@ -85,21 +85,19 @@
                   </td>
                   <td>{{ $product->status }}</td>
                   <td>
-                    <form action="" method="POST">
-                      @csrf
-                      @method('delete')
+                    {{ Form::open(['route' => ['product.destroy',$product->id], 'method' => 'delete'])}}
                       <div class="btn-group">
-                        <a href="{{ url('/admin/product/'.$product->id) }}" class="btn btn-info">
+                        <a href="{{ route('product.show',['product' => $product->id]) }}" class="btn btn-info">
                           <i class="fas fa-eye"></i>
                         </a>
-                        <a href="{{ url('/admin/product/'.$product->id).'/edit' }}" class="btn btn-success">
+                        <a href="{{ route('product.edit',['product' => $product->id]) }}" class="btn btn-success">
                           <i class="fas fa-pen"></i>
                         </a>
                         <button type="submit" class="btn btn-danger">
                           <i class="fas fa-trash"></i>
                         </button>
                       </div>
-                    </form>
+                    {{ Form:: close() }}
                   </td>
                 </tr>
                 @endforeach

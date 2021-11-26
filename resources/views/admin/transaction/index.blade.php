@@ -3,36 +3,63 @@
 @section('content-header')
   <div class="row mb-2">
     <div class="col-sm-6">
-      <h1 class="m-0">Dashboard</h1>
+      <h1 class="m-0">Transactions</h1>
     </div><!-- /.col -->
     <div class="col-sm-6">
       <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item active">Dashboard</li>
+        <li class="breadcrumb-item">Dashboard</li>
+        <li class="breadcrumb-item active">Transactions</li>
       </ol>
     </div><!-- /.col -->
   </div><!-- /.row -->
 @endsection
 
-          @section('title','Dashboard')
+@section('title','Transactions')
 
 @section('content')
   <div class="row">
     <div class="col">
+      @if (session('success'))
+        <div class="alert alert-success">
+          {{ session('success')}}
+          <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      @elseif(session('failed'))
+        <div class="alert alert-danger">
+          {{ session('failed')}}
+        </div>
+      @endif
       <div class="card">
         <div class="card-header">
-          <h4>Sales Graph</h4>
+          <h4 class="card-title">Transaction</h4>
+          <div class="card-tools">
+            <a href="{{route('transaction.create')}}" class="btn btn-tool">
+              <i class="fas fa-plus"></i>
+              Add
+            </a>
+            <a href="{{route('transaction.export')}}" class="btn btn-tool">
+              <i class="fas fa-Download"></i>
+              Export
+            </a>
+          </div>
         </div>
         <div class="card-body">
-          <canvas id="sales-chart" height="230"></canvas>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-header">
-          <h4>Latest Transaction</h4>
-        </div>
-        <div class="card-body">
+          {{-- {{ Form::open(['route'=> 'product.index','method'=>'get']) }} --}}
+          <div class="row">
+            {{-- <div class="col">
+              <div class="form-group">
+                {{ Form::label('category_id','Category') }}
+                {{ Form::select('category_id',$categories, request('category_id'), ['class'=> 'form-control', 'placeholder' => 'Search Category']) }}
+              </div>
+            </div>
+            <div class="col">
+                {{ Form::label('search','Search') }}
+                {{ Form::text('search', request('search'), ['class' => 'form-control', 'placeholder' => 'Search Transactions']) }}
+            </div> --}}
+          </div>
+          {{-- {{ Form::close() }} --}}
           <table class="table table-striped">
             <thead>
               <tr>
@@ -82,51 +109,35 @@
             </tbody>
           </table>
         </div>
+        <div class="card-footer">
+          {{-- berfungsi untuk menampilkan pagination bawaan Laravel dan Bootstrap --}}
+          {{ $transactions->appends($_GET)->links() }}
+        </div>
       </div>
     </div>
   </div>
 @endsection
 
 @section('script')
-<script>
-  const ctx = document.getElementById('sales-chart').getContext('2d');
-  const myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-          // jika tampilan bulan yang tampil hanya bulan yang ada datanya
-          {{-- labels: {!! json_encode($bulan) !!}, --}} 
-          
-          // jika tampilan bulan ingin tampil seluruhnya
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Des'],
-          datasets: [{
-              label: 'Overall Sales',
-              data: {!! json_encode($totals) !!},
-              backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)'
-              ],
-              borderColor: [
-                  'rgba(255, 99, 132, 1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)'
-              ],
-              borderWidth: 1
-          }]
-      },
-      options: {
-          scales: {
-              y: {
-                  beginAtZero: true
-              }
-          }
+  <script>
+    //function untuk mengganti URL / Refresh URL
+    var filter = function(){
+      //mengambil value dari komponen dengan id category_id dan search
+      var category_id = $('#category_id').val();
+      var search = $('#search').val();
+
+      window.location.replace("{{ route('product.index')}}?category_id="+category_id+"&search="+search);
+    }
+    // berfungsi uagar setiap komponen dengan id #category_id berubah akan melakukan function filter
+    $('#category_id').on('change',function (){
+      filter();
+    })
+
+    $('search').keypress(function (e){
+      if(e.keycode == 13){
+        filter();
       }
-  });
-</script>
+    })
+
+  </script>
 @endsection

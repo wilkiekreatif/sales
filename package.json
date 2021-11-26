@@ -10,11 +10,16 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "@prettier/plugin-php": "0.14.3",
         "axios": "^0.21",
+        "bootstrap": "^4.6.0",
+        "jquery": "^3.6",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
+        "popper.js": "^1.16.1",
         "postcss": "^8.1.14",
-        "@prettier/plugin-php": "0.14.3",
-        "prettier": "2.0.5"
+        "prettier": "2.0.5",
+        "sass": "^1.32.11",
+        "sass-loader": "^11.0.1"
     }
 }

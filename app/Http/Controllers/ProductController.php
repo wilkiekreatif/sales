@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -107,9 +108,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        //
+        return view('admin.product.show',['product' => $product]);
     }
 
     /**
@@ -118,9 +119,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Product $product)
     {
-        //
+        $categories = Category::pluck('name','id');
+        return view('admin.product.edit', ['categories' => $categories, 'product' => $product]);
     }
 
     /**
@@ -130,9 +132,49 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        $inputs = $request->all();
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required',
+            'price' => 'required|numeric', //ditambahkan numeric karena price menggunakan BigInteger pada tabel nya, jika hanya menggunakan Integer, bisa digunakan Integer pada code nya
+            'sku' => 'required',
+            'status' => 'required|in:active,inactive',
+            'image' => 'nullable|image' //jika ingin melimit extensi bisa menggunakan 'mimes:' kemudian diikuti file extensi yang diinginkan pada bagian code setelah |, ex "nullable|mimes:pdf,docx,png"
+            // jika ingin melimit size file, maka gunakan sintak max: [size dalam bentuk kb] ex: 'image' => 'nullable|image|max:1024'
+        ]);
+
+        // dd($request->all());
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            if($image->isValid()){
+
+                //kondisi untuk mengecek apakah data $product->image tersedia & di storage apakah file nya tersedia atau tidak
+                if(!empty($product->image) && Storage::exists('public/product/'.$product->image)){
+                    //sintak hapus image di folder Storage
+                    Storage::delete('public/product/'.$product->image);
+                }
+
+                $imageName = time().$product->name.'.'.$image->getClientOriginalExtension(); //untuk penamaan file saat di simpan di server
+                $image->storeAs('public/product',$imageName); //Sintak untuk memindahkan file dari user ke Server & lokasi penyimpanan file upload (pembacaan dimulai dari "storage/app")
+                $inputs['image'] = $imageName;
+            }else{
+                //berfungsi untuk mengeluarkan data Image
+                //data yang disimpan hanya category_id sampai status
+                unset($inputs['image']);
+            }
+        }else{
+            unset($inputs['image']);
+        }
+
+        $result = $product->update($inputs); //tidak menggunakan ->all() karena data tersebut diubah terlebih dahulu yaitu nama image dan penyimpanan datanya.
+
+        if ($result){
+            return redirect(route('product.index'))->with('success', 'Update data success!');
+        }else{
+            return redirect(route('product.index'))->with('failed', 'Update data failed!');
+        }
     }
 
     /**
@@ -141,8 +183,20 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        //
+        //Hapus Image terlebih dahulu
+        if(!empty($product->image) && Storage::exists('public/product/'.$product->image)){
+            //sintak hapus image di folder Storage
+            Storage::delete('public/product/'.$product->image);
+        }
+        // Hapus data di database
+        $result = $product->delete();
+
+        if ($result){
+            return redirect(route('product.index'))->with('success', 'Delete data success!');
+        }else{
+            return redirect(route('product.index'))->with('failed', 'Delete data failed!');
+        }
     }
 }
